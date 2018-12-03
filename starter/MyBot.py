@@ -40,13 +40,33 @@ while True:
     me = game.me
     game_map = game.game_map
 
+    # Storing destination info
+    ship_status = {}
+
     # A command queue holds all the commands you will run this turn. You build this list up and submit it at the
     #   end of the turn.
     command_queue = []
 
     for ship in me.get_ships():
+        
+        # Add 'missions' for ships
+        if ship.id not in ship_status:
+            ship_status[ship.id] = "Exploring"
+        
+        if ship_status[ship.id] == "Returning":
+            if ship.position == me.shipyard.position:
+                ship_status[ship.id] = "Exploring"
+            else:
+                move = game_map.naive_navigate(ship,me.shipyard.position)
+                command_queue.append(ship.move(move))
+                continue
+        elif ship.halite_amount >= constants.MAX_HALITE / 4:
+            ship_status[ship.id] = "Returning"
+        
+        
         # For each of your ships, move randomly if the ship is on a low halite location or the ship is full.
         #   Else, collect halite.
+        logging.info("Ship {} has {} halite".format(ship.id,ship.halite_amount))
         if game_map[ship.position].halite_amount < constants.MAX_HALITE / 10 or ship.is_full:
             command_queue.append(
                 ship.move(
