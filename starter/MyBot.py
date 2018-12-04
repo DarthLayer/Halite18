@@ -47,6 +47,9 @@ while True:
     #   end of the turn.
     command_queue = []
 
+    for drop_off in me.get_dropoffs():
+        logging.info("Printing drop off ID {}",format(drop_off.id))
+
     for ship in me.get_ships():
         
         # Add 'missions' for ships
@@ -65,13 +68,20 @@ while True:
         
         # For each of your ships, move randomly if the ship is on a low halite location or the ship is full.
         #   Else, collect halite.
-        logging.info("Ship {} has {} halite".format(ship.id,ship.halite_amount))
+        #logging.info("Ship {} has {} halite".format(ship.id,ship.halite_amount))
+        
+        #logging.info("Get dropoffs {}").format(me.get_dropoffs())
+        for i in me.get_dropoffs():
+            logging.info("At turn {}, ship {}, dropoff {}".format(game.turn_number,ship.id,i.id))
+        
+        """
         if (
             ship_status[ship.id] == "Returning"
-            and game_map[ship.position].halite_amount > constants.MAX_HALITE
-            and me.halite
-            ):
-
+            and game_map[ship.position].halite_amount > (constants.MAX_HALITE / 2)
+            and game_map.calculate_distance(ship.position,min(me.get_dropoffs()).position) > 5
+            and me.halite_amount >= constants.DROPOFF_COST
+            ):command_queue.append(ship.make_dropoff())
+        """
 
         if game_map[ship.position].halite_amount < constants.MAX_HALITE / 10 or ship.is_full:
             command_queue.append(
