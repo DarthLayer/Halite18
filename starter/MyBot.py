@@ -63,10 +63,16 @@ while True:
         elif ship.halite_amount >= constants.MAX_HALITE / 4:
             ship_status[ship.id] = "Returning"
         
-        
         # For each of your ships, move randomly if the ship is on a low halite location or the ship is full.
         #   Else, collect halite.
         logging.info("Ship {} has {} halite".format(ship.id,ship.halite_amount))
+        if (
+            ship_status[ship.id] == "Returning"
+            and game_map[ship.position].halite_amount > constants.MAX_HALITE
+            and me.halite
+            ):
+
+
         if game_map[ship.position].halite_amount < constants.MAX_HALITE / 10 or ship.is_full:
             command_queue.append(
                 ship.move(
